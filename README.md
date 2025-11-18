@@ -4,11 +4,12 @@
 
 - [Vue d'ensemble](#vue-densemble)
 - [Architecture OpenShift UPI](#architecture-openshift-upi)
+- [Diagrammes Interactifs](#diagrammes-interactifs)
 - [Structure du projet](#structure-du-projet)
 - [Prérequis](#prérequis)
 - [Utilisation](#utilisation)
 - [Décisions de design](#décisions-de-design)
-- [Adaptation à des providers spécifiques](#adaptation-à-des-providers-spécifiques)
+- [Adaptation à des providers spécifiques](#adaptation-à-des-providers-spécifique)
 - [Points clés pour l'entretien](#points-clés-pour-lentretien)
 
 ## 🎯 Vue d'ensemble
@@ -103,6 +104,21 @@ OpenShift utilise **Ignition** pour configurer les noeuds au premier démarrage 
    └── Workers démarrent les pods système
 ```
 
+## 📊 Diagrammes Interactifs
+
+Pour une visualisation complète et interactive de l'architecture, consultez **[DIAGRAMS_MERMAID.md](DIAGRAMS_MERMAID.md)** qui contient 8 diagrammes Mermaid :
+
+1. **Architecture Générale** - Vue d'ensemble du cluster avec bootstrap, masters, workers
+2. **Flux de Déploiement** - Étapes complètes de Terraform init jusqu'au cluster opérationnel
+3. **Architecture Réseau** - DNS, Load Balancer, VLANs, allocation IPs
+4. **Flux de Requête HTTP** - Lifecycle d'une requête depuis le client jusqu'au pod
+5. **Structure Terraform** - Flow des variables, locals, ressources, et outputs
+6. **Haute Disponibilité** - Scénarios de panne et tolérance aux pannes
+7. **Sécurité Zero Trust** - 4 couches de défense (réseau, identité, chiffrement, monitoring)
+8. **Lifecycle OpenShift UPI** - State diagram du déploiement à la mise hors service
+
+> 💡 **Astuce** : Ces diagrammes s'affichent automatiquement sur GitHub et dans la plupart des éditeurs Markdown modernes. Imprimez-les pour votre entretien !
+
 ## 📁 Structure du projet
 
 ```
@@ -111,7 +127,12 @@ OpenShift utilise **Ignition** pour configurer les noeuds au premier démarrage 
 ├── variables.tf                 # Définition des variables
 ├── outputs.tf                   # Outputs (IPs, noms, résumés)
 ├── terraform.tfvars.example     # Exemple de configuration
-└── README.md                    # Cette documentation
+├── .gitignore                   # Exclusion fichiers sensibles
+├── README.md                    # Cette documentation
+├── DIAGRAMS_MERMAID.md          # Diagrammes interactifs Mermaid
+├── ARCHITECTURE.md              # Diagrammes ASCII détaillés
+├── GUIDE_ENTRETIEN.md           # Guide de préparation entretien
+└── POINTS_CLES_EXPLICATIONS.md  # Explications par fichier
 ```
 
 ### Fichiers détaillés
