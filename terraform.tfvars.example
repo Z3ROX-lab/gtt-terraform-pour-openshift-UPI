@@ -1,0 +1,153 @@
+# ============================================================================
+# Exemple de fichier de variables pour OpenShift UPI
+# ============================================================================
+#
+# Instructions:
+# 1. Copier ce fichier: cp terraform.tfvars.example terraform.tfvars
+# 2. Modifier les valeurs selon votre environnement
+# 3. Le fichier terraform.tfvars est automatiquement chargé par Terraform
+#
+# ============================================================================
+
+# --- Configuration du Cluster ---
+
+cluster_name = "ocp-prod"
+base_domain  = "company.local"
+
+# --- Compteurs de Noeuds ---
+
+# Nombre de masters (doit être impair: 3, 5, 7)
+masters_count = 3
+
+# Nombre de workers (minimum 2 pour la HA)
+workers_count = 3
+
+# --- Configuration Réseau ---
+
+network_name     = "vlan-100-prod"
+network_cidr     = "10.10.100.0/24"
+ip_range_start   = "10.10.100.20"
+
+# Les IPs seront allouées automatiquement:
+# - Bootstrap: 10.10.100.20
+# - Master-0: 10.10.100.21
+# - Master-1: 10.10.100.22
+# - Master-2: 10.10.100.23
+# - Worker-0: 10.10.100.24
+# - Worker-1: 10.10.100.25
+# - Worker-2: 10.10.100.26
+
+# --- Ressources Bootstrap ---
+
+bootstrap_cpu       = 4
+bootstrap_memory    = 16384  # 16 GB
+bootstrap_disk_size = 120    # GB
+
+# --- Ressources Master ---
+
+master_cpu       = 8
+master_memory    = 32768  # 32 GB
+master_disk_size = 200    # GB
+
+# --- Ressources Worker ---
+
+worker_cpu       = 8
+worker_memory    = 32768  # 32 GB
+worker_disk_size = 200    # GB
+
+# --- Fichiers Ignition ---
+
+# Ces fichiers sont générés par openshift-install create ignition-configs
+bootstrap_ignition = "/path/to/bootstrap.ign"
+master_ignition    = "/path/to/master.ign"
+worker_ignition    = "/path/to/worker.ign"
+
+# --- Configuration de la Plateforme ---
+
+platform   = "nutanix"  # Options: nutanix, vsphere, kvm, generic
+image_name = "rhcos-4.14.0"
+datacenter = "dc-paris-01"
+
+# --- Tags et Labels ---
+
+common_tags = {
+  managed_by  = "terraform"
+  purpose     = "openshift-upi"
+  environment = "production"
+  department  = "infrastructure"
+  cost_center = "IT-OPS-001"
+}
+
+# --- Configuration de Sécurité ---
+
+enable_secure_boot = true
+enable_vtpm        = true
+
+# ============================================================================
+# Exemples de configurations pour différents scénarios
+# ============================================================================
+
+# --- Scénario 1: Cluster de Développement (petites ressources) ---
+/*
+cluster_name = "ocp-dev"
+base_domain  = "dev.company.local"
+
+masters_count = 3
+workers_count = 2
+
+bootstrap_cpu    = 4
+bootstrap_memory = 16384
+master_cpu       = 4
+master_memory    = 16384
+worker_cpu       = 4
+worker_memory    = 16384
+*/
+
+# --- Scénario 2: Cluster de Production (grandes ressources) ---
+/*
+cluster_name = "ocp-prod"
+base_domain  = "prod.company.local"
+
+masters_count = 5  # 5 masters pour plus de résilience
+workers_count = 5  # 5 workers minimum
+
+bootstrap_cpu    = 4
+bootstrap_memory = 16384
+master_cpu       = 16
+master_memory    = 65536  # 64 GB
+worker_cpu       = 16
+worker_memory    = 65536  # 64 GB
+*/
+
+# --- Scénario 3: Cluster Edge (ressources limitées) ---
+/*
+cluster_name = "ocp-edge"
+base_domain  = "edge.company.local"
+
+masters_count = 3
+workers_count = 2
+
+bootstrap_cpu    = 4
+bootstrap_memory = 16384
+master_cpu       = 4
+master_memory    = 16384
+worker_cpu       = 2
+worker_memory    = 8192  # 8 GB
+*/
+
+# --- Scénario 4: Cluster pour IA/ML (workers avec beaucoup de ressources) ---
+/*
+cluster_name = "ocp-ai"
+base_domain  = "ai.company.local"
+
+masters_count = 3
+workers_count = 4
+
+bootstrap_cpu    = 4
+bootstrap_memory = 16384
+master_cpu       = 8
+master_memory    = 32768
+worker_cpu       = 32     # Workers avec beaucoup de CPU
+worker_memory    = 131072  # 128 GB pour les workloads ML
+worker_disk_size = 500     # Disque large pour les datasets
+*/
