@@ -713,7 +713,3 @@ resource "libvirt_ignition" "master" {
 - [Terraform Nutanix Provider](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs)
 - [Terraform vSphere Provider](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs)
 - [OpenShift Network Requirements](https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-network-user-infra_installing-platform-agnostic)
-
----
-
-**Bonne chance pour votre présentation !** 🚀
