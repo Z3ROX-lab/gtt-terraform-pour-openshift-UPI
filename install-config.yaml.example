@@ -1,0 +1,84 @@
+# ============================================================================
+# Install Config pour OpenShift UPI
+# ============================================================================
+#
+# IMPORTANT : En mode UPI, compute.replicas DOIT être 0
+# Les workers sont créés par Terraform (voir variables.tf : workers_count)
+#
+# Instructions :
+# 1. Copier ce fichier : cp install-config.yaml.example install-config.yaml
+# 2. Modifier les valeurs (pullSecret, sshKey, etc.)
+# 3. Générer les fichiers Ignition :
+#    openshift-install create ignition-configs --dir=.
+# 4. Utiliser les fichiers .ign générés avec Terraform
+#
+# ============================================================================
+
+apiVersion: v1
+baseDomain: example.com
+metadata:
+  name: ocp-cluster
+
+# ============================================================================
+# COMPUTE (Workers)
+# ============================================================================
+# ⚠️ EN MODE UPI : replicas DOIT être 0
+# Les workers sont créés par Terraform (variable workers_count = 3)
+compute:
+- name: worker
+  replicas: 0  # ← OBLIGATOIRE en UPI (ne pas changer !)
+
+# ============================================================================
+# CONTROL PLANE (Masters)
+# ============================================================================
+# En UPI, on spécifie le nombre ici ET dans Terraform (masters_count = 3)
+controlPlane:
+  name: master
+  replicas: 3
+
+# ============================================================================
+# NETWORKING
+# ============================================================================
+networking:
+  networkType: OVNKubernetes
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  serviceNetwork:
+  - 172.30.0.0/16
+  machineNetwork:
+  - cidr: 192.168.50.0/24  # Doit correspondre à votre réseau
+
+# ============================================================================
+# PLATFORM
+# ============================================================================
+# En UPI, on utilise "none" car l'infrastructure est provisionnée manuellement
+platform:
+  none: {}
+
+# ============================================================================
+# SECRETS
+# ============================================================================
+# ⚠️ REMPLACER PAR VOS VRAIES VALEURS
+
+# Pull Secret depuis https://console.redhat.com/openshift/install/pull-secret
+pullSecret: '{"auths":{"cloud.openshift.com":{"auth":"VOTRE_TOKEN","email":"votre@email.com"}}}'
+
+# Clé SSH publique pour accéder aux noeuds CoreOS
+sshKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC... votre-cle-publique'
+
+# ============================================================================
+# NOTES
+# ============================================================================
+# Après avoir généré les fichiers Ignition avec :
+#   openshift-install create ignition-configs --dir=.
+#
+# Vous obtiendrez :
+#   - bootstrap.ign  → utilisé par le bootstrap (1 noeud)
+#   - master.ign     → utilisé par les masters (3 noeuds)
+#   - worker.ign     → utilisé par les workers (3 noeuds via Terraform)
+#
+# Ces fichiers sont référencés dans variables.tf :
+#   - bootstrap_ignition = "bootstrap.ign"
+#   - master_ignition    = "master.ign"
+#   - worker_ignition    = "worker.ign"
