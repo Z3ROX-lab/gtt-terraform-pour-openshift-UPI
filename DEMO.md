@@ -461,7 +461,3 @@ terraform output (si apply fait)
 - [ ] Screenshots de backup préparés
 - [ ] Script de démo répété 2-3 fois
 - [ ] Questions/réponses anticipées préparées
-
----
-
-**Avec cette démo, vous montrez une maîtrise complète de Terraform ET d'OpenShift UPI ! 🚀**
