@@ -596,14 +596,12 @@ resource "libvirt_ignition" "master" {
 
 **Note** : *Différence entre IPI et UPI*
 
-**Réponse** :
 - **IPI** : Mode automatisé où l'installeur OpenShift crée toute l'infrastructure (cloud public)
 - **UPI** : Mode manuel où l'utilisateur provisionne l'infrastructure (on-premise, contrôle total)
-- **Cas d'usage UPI** : Nutanix, VMware, bare metal, restrictions de sécurité, environnements air-gapped
+- **Cas d'usage UPI** : Nutanix, VMware, bare metal, AWS, Azure, GCP, restrictions de sécurité, environnements air-gapped
 
 **Note** : *3 masters minimum*
 
-**Réponse** :
 - **etcd** nécessite un quorum pour fonctionner
 - Quorum = (n/2) + 1
 - Avec 3 masters : on tolère 1 panne (quorum = 2/3)
@@ -613,7 +611,6 @@ resource "libvirt_ignition" "master" {
 
 **Note** : *Structure du code*
 
-**Réponse** :
 - **Séparation des concerns** : variables, ressources, outputs dans des fichiers dédiés
 - **Réutilisabilité** : Facile de créer des modules
 - **Maintenabilité** : Code clair et bien commenté
@@ -621,7 +618,6 @@ resource "libvirt_ignition" "master" {
 
 **Note** : *Adaptabilité du code*
 
-**Réponse** :
 - Variables pour tous les paramètres importants
 - Provider générique facilement remplaçable
 - Exemples pour Nutanix, vSphere, KVM dans le code
@@ -631,18 +627,18 @@ resource "libvirt_ignition" "master" {
 
 **Note** : *Aspects de sécurité considérés*
 
-**Réponse** :
-- **Ignition** : Configuration sécurisée dès le boot
+- **Ignition** : Configuration sécurisée dès le boot (immuable)
 - **Secure Boot** : Variable pour activer (conformité)
 - **vTPM** : Support pour le chiffrement
-- **Tags** : Identification et RBAC
-- **Validations** : Prévention de configurations non conformes
-- **Séparation réseau** : Masters et workers isolables
-- **Fichiers sensibles** : Ignition contient secrets (à gérer avec soin)
+- **Tags/Labels** : Métadonnées (clé-valeur) pour identification des ressources, RBAC, facturation, automation (ex: `role=master`, `team=platform`)
+- **Validations** : Prévention de configurations non conformes (shift-left security)
+- **Séparation réseau** : Masters et workers isolables (VLANs, NetworkPolicies, SCC)
+- **Secrets Management** : HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, External Secrets Operator
+- **Encryption** : At-rest (etcd natif, PV, VM disks), In-transit (mTLS natif, Ingress TLS)
+- **Compliance** : OpenSCAP natif (Compliance Operator), Prowler pour clouds publics
 
 **Note** : *Sécurisation des fichiers Ignition*
 
-**Réponse** :
 - Ne jamais commiter les `.ign` dans Git
 - Utiliser des backends Terraform chiffrés (S3 + KMS, Azure Blob + encryption)
 - Variables sensibles via Vault ou cloud secret managers
@@ -653,7 +649,6 @@ resource "libvirt_ignition" "master" {
 
 **Note** : *Besoins réseau pour OpenShift UPI*
 
-**Réponse** :
 - **Load Balancer** requis (non géré par Terraform dans cet exercice) :
   - API (6443) → Masters
   - Machine Config (22623) → Masters (durant install)
@@ -666,7 +661,6 @@ resource "libvirt_ignition" "master" {
 
 **Note** : *Gestion DNS et Load Balancer*
 
-**Réponse** :
 - Hors scope de cet exercice (précisé dans le brief)
 - Mais outputs fournis pour faciliter la configuration
 - En production : Terraform peut aussi gérer DNS (Route53, Azure DNS)
@@ -674,7 +668,6 @@ resource "libvirt_ignition" "master" {
 
 ### Démonstration pratique
 
-**Préparez-vous à** :
 1. **Expliquer chaque section** de `variables.tf`, `main.tf`, `outputs.tf`
 2. **Montrer un plan Terraform** : `terraform plan`
 3. **Expliquer les outputs** : Comment les utiliser pour la suite
@@ -685,16 +678,14 @@ resource "libvirt_ignition" "master" {
 
 **Note** : *Audit de l'infrastructure*
 
-**Réponse** :
 - **Terraform state** contient toute la config (audit trail)
-- **Tags** permettent le tracking
-- **Outputs** fournissent inventaire pour scanning
+- **Tags/Labels** permettent le tracking des ressources (qui a créé quoi, pour quel projet)
+- **Outputs** fournissent inventaire pour scanning de sécurité
 - **Intégration CI/CD** : `terraform plan` en PR pour review
 - **Policy-as-Code** : Sentinel, OPA pour valider la conformité
 
 **Note** : *Gestion des secrets*
 
-**Réponse** :
 - **Ne jamais** mettre de secrets en clair dans `.tf` ou `.tfvars`
 - Utiliser :
   - Terraform Cloud/Enterprise (encrypted variables)
@@ -707,7 +698,6 @@ resource "libvirt_ignition" "master" {
 
 **Note** : *Évolution du code*
 
-**Réponse** :
 - **Modules** : Créer un module réutilisable `openshift-upi`
 - **Workspaces** : Gérer dev/staging/prod
 - **Remote State** : S3, Azure Blob, Terraform Cloud
