@@ -645,6 +645,32 @@ resource "libvirt_ignition" "master" {
 - Rotation des certificats générés
 - Permissions restrictives sur les fichiers (600)
 
+### Conformité et Régulation
+
+**Note** : *Standards et frameworks de conformité supportés*
+
+- **Standards industriels** :
+  - ISO 27001 : Gestion de la sécurité de l'information
+  - SOC 2 Type II : Contrôles de sécurité et disponibilité
+  - PCI-DSS : Pour les environnements traitant des données de paiement
+  - GDPR : Protection des données personnelles (logs, audit trails)
+
+- **Outils de conformité OpenShift** :
+  - **Compliance Operator** : Scans automatisés basés sur OpenSCAP
+  - **CIS Benchmarks** : Profils de durcissement pour Kubernetes/OpenShift
+  - **NIST 800-53** : Contrôles de sécurité fédéraux (profils disponibles)
+
+- **Policy as Code** :
+  - **OPA/Gatekeeper** : Policies Kubernetes déclaratives
+  - **Kyverno** : Alternative cloud-native pour admission control
+  - **Admission Webhooks** : Validation des ressources à la création
+
+- **Audit et traçabilité** :
+  - Audit logs Kubernetes (API server)
+  - Centralisation avec ELK/Splunk/Loki
+  - Rétention configurable selon régulations
+  - Immutabilité des logs pour forensics
+
 ### Architecture Réseau et Load Balancing
 
 **Note** : *Besoins réseau pour OpenShift UPI*

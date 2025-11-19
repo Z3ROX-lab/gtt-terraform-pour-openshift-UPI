@@ -502,3 +502,146 @@ Diagrammes ASCII illustrant l'architecture.
 4. **Automation** : Calculs automatiques, pas de duplication
 5. **Opérabilité** : Outputs riches pour intégration DNS/LB/monitoring
 6. **Documentation** : Code auto-documenté, README exhaustif
+
+---
+
+## 🔒 Conformité et Régulation - Aspects Techniques
+
+### Compliance Operator (OpenSCAP natif)
+```yaml
+# Installation du Compliance Operator
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: compliance-operator
+  namespace: openshift-compliance
+spec:
+  channel: stable
+  name: compliance-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+
+---
+# Scan avec profil CIS
+apiVersion: compliance.openshift.io/v1alpha1
+kind: ComplianceScan
+metadata:
+  name: cis-compliance-scan
+spec:
+  profile: xccdf_org.ssgproject.content_profile_cis
+  content: ssg-ocp4-ds.xml
+  scanType: Node
+```
+
+### Policy as Code avec OPA/Gatekeeper
+```yaml
+# Contrainte : Interdire les containers privilegiés
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPPrivilegedContainer
+metadata:
+  name: deny-privileged-containers
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    excludedNamespaces:
+      - kube-system
+      - openshift-*
+
+---
+# Template de contrainte
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8spspprivilegedcontainer
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPPrivilegedContainer
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spspprivileged
+        violation[{"msg": msg}] {
+          c := input.review.object.spec.containers[_]
+          c.securityContext.privileged
+          msg := "Les containers privilegiés sont interdits"
+        }
+```
+
+### Audit Logging Kubernetes
+```yaml
+# Configuration audit policy (API Server)
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+  # Log toutes les modifications de secrets
+  - level: Metadata
+    resources:
+      - group: ""
+        resources: ["secrets"]
+    verbs: ["create", "update", "patch", "delete"]
+
+  # Log les accès aux ressources sensibles
+  - level: RequestResponse
+    resources:
+      - group: ""
+        resources: ["pods/exec", "pods/attach"]
+
+  # Log les changements RBAC
+  - level: Metadata
+    resources:
+      - group: "rbac.authorization.k8s.io"
+        resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+```
+
+### Intégration Terraform pour la conformité
+```hcl
+# variables.tf - Options de conformité
+variable "compliance_profile" {
+  description = "Profil de conformité à appliquer"
+  type        = string
+  default     = "cis"
+
+  validation {
+    condition     = contains(["cis", "nist-800-53", "pci-dss", "hipaa"], var.compliance_profile)
+    error_message = "Profil de conformité non supporté."
+  }
+}
+
+variable "enable_audit_logging" {
+  description = "Activer l'audit logging Kubernetes"
+  type        = bool
+  default     = true
+}
+
+variable "audit_log_retention_days" {
+  description = "Rétention des logs d'audit (jours)"
+  type        = number
+  default     = 90
+
+  validation {
+    condition     = var.audit_log_retention_days >= 30
+    error_message = "La rétention minimale est de 30 jours pour conformité."
+  }
+}
+
+# Tags de conformité pour les ressources
+locals {
+  compliance_tags = {
+    compliance_profile = var.compliance_profile
+    audit_enabled      = var.enable_audit_logging
+    data_classification = "confidential"
+    regulatory_scope   = "gdpr,iso27001"
+  }
+}
+```
+
+**Standards couverts** :
+- **ISO 27001** : Gestion de la sécurité de l'information
+- **SOC 2 Type II** : Contrôles de sécurité et disponibilité
+- **PCI-DSS** : Environnements de paiement
+- **GDPR** : Protection des données personnelles
+- **NIST 800-53** : Contrôles fédéraux (profils OpenSCAP disponibles)
