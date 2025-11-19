@@ -514,7 +514,3 @@ variables.tf                     main.tf                      outputs.tf
 │                                                                            │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
-
----
-
-**Imprimez ces diagrammes pour vos présentations !**
