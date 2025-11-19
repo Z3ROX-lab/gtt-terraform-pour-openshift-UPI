@@ -494,7 +494,7 @@ Diagrammes ASCII illustrant l'architecture.
 | **GUIDE_PREPARATION.md** | "Préparation technique Lead SecOps" |
 | **ARCHITECTURE.md** | "Visualisation de l'architecture complexe" |
 
-### Points à répéter lors d'une présentation
+### Points clés à retenir
 
 1. **Sécurité by design** : Validations, Ignition, tags, least privilege
 2. **Conformité OpenShift** : Respect des exigences Red Hat (quorum etcd, ressources minimales)
@@ -502,7 +502,3 @@ Diagrammes ASCII illustrant l'architecture.
 4. **Automation** : Calculs automatiques, pas de duplication
 5. **Opérabilité** : Outputs riches pour intégration DNS/LB/monitoring
 6. **Documentation** : Code auto-documenté, README exhaustif
-
----
-
-**Bonne préparation pour votre présentation ! 🚀**
