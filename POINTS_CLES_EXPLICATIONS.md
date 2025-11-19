@@ -147,6 +147,13 @@ locals {
 - IPs séquentielles : `.10` (bootstrap), `.11-.13` (masters), `.14+` (workers)
 - Métadonnées structurées : réutilisables dans outputs et tags
 
+⚠️ **Note importante pour la production** :
+- **Masters** : ⚠️ **OBLIGATOIREMENT IPs statiques** (exigence Red Hat pour DNS A records, etcd SRV records)
+- **Workers** : ✅ DHCP possible (Terraform récupère les IPs via attributs computed)
+- **Bootstrap** : ✅ DHCP possible (noeud temporaire)
+
+> Dans ce code de démo avec `null_resource`, les IPs sont calculées. En production réelle avec Nutanix/vSphere, utiliser `var.master_static_ips = ["192.168.50.11", "192.168.50.12", "192.168.50.13"]` pour les masters, et laisser DHCP pour workers/bootstrap.
+
 #### 3. **Ressource Bootstrap** (lignes 72-105)
 ```hcl
 resource "null_resource" "bootstrap_node" {
