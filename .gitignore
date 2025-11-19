@@ -42,3 +42,6 @@ terraform.rc
 # Backup files
 *.backup
 *.bak
+
+# Fichiers de préparation personnelle
+GUIDE_PREPARATION.md
