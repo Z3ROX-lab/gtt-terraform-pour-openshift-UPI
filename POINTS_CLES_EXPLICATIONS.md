@@ -1,6 +1,6 @@
 # Points Clés - Explications par Fichier
 
-Ce document fournit une explication concise de chaque fichier pour vous aider à les présenter lors d'une démonstration technique.
+Ce document fournit une explication concise de chaque fichier terraform.
 
 ---
 
