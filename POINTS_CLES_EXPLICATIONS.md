@@ -184,6 +184,34 @@ resource "null_resource" "master_nodes" {
 > "Les masters utilisent count pour créer N instances. J'ai ajouté depends_on pour garantir que le bootstrap démarre en premier (il héberge le Machine Config Server dont les masters ont besoin). Chaque master est identifiable via son index et son hostname unique."
 
 #### 5. **Ressources Workers** (lignes 160-202)
+```hcl
+# variables.tf - Variable de scaling
+variable "workers_count" {
+  description = "Nombre de worker nodes (scalable selon besoins)"
+  type        = number
+  default     = 2
+
+  validation {
+    condition     = var.workers_count >= 2
+    error_message = "Minimum 2 workers pour la haute disponibilité."
+  }
+}
+
+# main.tf - Ressource worker scalable
+resource "null_resource" "worker_nodes" {
+  count = var.workers_count  # Changer cette valeur pour scaler
+
+  triggers = {
+    name  = local.worker_metadata[count.index].hostname
+    role  = "worker"
+  }
+
+  depends_on = [null_resource.master_nodes]
+}
+
+# Exemple de scaling : terraform apply -var="workers_count=10"
+# Passe de 2 à 10 workers sans modifier le code
+```
 **Explication** :
 > "Même pattern que les masters mais avec workers_count paramétrable. C'est là qu'on peut scaler horizontalement selon les besoins en compute. Pour votre projet IA, vous pourriez facilement passer de 2 à 10 workers en changeant une variable."
 
