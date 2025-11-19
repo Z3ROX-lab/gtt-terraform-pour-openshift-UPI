@@ -82,15 +82,15 @@ graph TB
     Worker0 --> Monitoring
     Worker1 --> Monitoring
 
-    style Bootstrap fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px,stroke-dasharray: 5 5
-    style Master0 fill:#4dabf7,stroke:#1864ab,stroke-width:3px
-    style Master1 fill:#4dabf7,stroke:#1864ab,stroke-width:3px
-    style Master2 fill:#4dabf7,stroke:#1864ab,stroke-width:3px
-    style Worker0 fill:#51cf66,stroke:#2b8a3e,stroke-width:3px
-    style Worker1 fill:#51cf66,stroke:#2b8a3e,stroke-width:3px
-    style Worker2 fill:#51cf66,stroke:#2b8a3e,stroke-width:3px
-    style etcd fill:#ffa94d,stroke:#e67700,stroke-width:4px
-    style LB fill:#b197fc,stroke:#7048e8,stroke-width:3px
+    style Bootstrap stroke:#FF0000,stroke-width:4px,stroke-dasharray: 5 5
+    style Master0 stroke:#0066CC,stroke-width:4px
+    style Master1 stroke:#0066CC,stroke-width:4px
+    style Master2 stroke:#0066CC,stroke-width:4px
+    style Worker0 stroke:#00AA00,stroke-width:4px
+    style Worker1 stroke:#00AA00,stroke-width:4px
+    style Worker2 stroke:#00AA00,stroke-width:4px
+    style etcd stroke:#FF8800,stroke-width:5px
+    style LB stroke:#9900CC,stroke-width:4px
 ```
 
 **Légende** :
@@ -143,17 +143,17 @@ flowchart TD
 
     ClusterReady --> Outputs[📊 Terraform Outputs<br/>IPs, DNS, LB config]
 
-    style Start fill:#69db7c,stroke:#2b8a3e,stroke-width:4px
-    style ClusterReady fill:#69db7c,stroke:#2b8a3e,stroke-width:4px
-    style CreateBootstrap fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px
-    style BootBootstrap fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px
-    style StartMCS fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px
-    style DestroyBootstrap fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px,stroke-dasharray: 5 5
-    style CreateMasters fill:#4dabf7,stroke:#1864ab,stroke-width:3px
-    style BootMasters fill:#4dabf7,stroke:#1864ab,stroke-width:3px
-    style FormEtcd fill:#ffa94d,stroke:#e67700,stroke-width:3px
-    style CreateWorkers fill:#51cf66,stroke:#2b8a3e,stroke-width:3px
-    style BootWorkers fill:#51cf66,stroke:#2b8a3e,stroke-width:3px
+    style Start stroke:#00AA00,stroke-width:5px
+    style ClusterReady stroke:#00AA00,stroke-width:5px
+    style CreateBootstrap stroke:#FF0000,stroke-width:4px
+    style BootBootstrap stroke:#FF0000,stroke-width:4px
+    style StartMCS stroke:#FF0000,stroke-width:4px
+    style DestroyBootstrap stroke:#FF0000,stroke-width:4px,stroke-dasharray: 5 5
+    style CreateMasters stroke:#0066CC,stroke-width:4px
+    style BootMasters stroke:#0066CC,stroke-width:4px
+    style FormEtcd stroke:#FF8800,stroke-width:4px
+    style CreateWorkers stroke:#00AA00,stroke-width:4px
+    style BootWorkers stroke:#00AA00,stroke-width:4px
 ```
 
 **Phases** :
@@ -236,11 +236,11 @@ graph TB
     GW --> W1
     GW --> W2
 
-    style DNS fill:#a5d8ff,stroke:#1864ab,stroke-width:3px
-    style LB fill:#d0bfff,stroke:#7048e8,stroke-width:3px
-    style Bootstrap_Net fill:#ffc9c9,stroke:#c92a2a,stroke-width:3px
-    style Masters_Net fill:#a5d8ff,stroke:#1864ab,stroke-width:3px
-    style Workers_Net fill:#b2f2bb,stroke:#2b8a3e,stroke-width:3px
+    style DNS stroke:#0066CC,stroke-width:4px
+    style LB stroke:#9900CC,stroke-width:4px
+    style Bootstrap_Net stroke:#FF0000,stroke-width:4px
+    style Masters_Net stroke:#0066CC,stroke-width:4px
+    style Workers_Net stroke:#00AA00,stroke-width:4px
 ```
 
 ---
@@ -341,17 +341,17 @@ graph LR
     Masters --> OutSummary
     Workers --> OutSummary
 
-    style VarFile fill:#a5d8ff,stroke:#1864ab,stroke-width:3px
-    style TFVars fill:#a5d8ff,stroke:#1864ab,stroke-width:3px
-    style Locals fill:#ffe066,stroke:#f08c00,stroke-width:3px
-    style Bootstrap fill:#ffc9c9,stroke:#c92a2a,stroke-width:3px
-    style Masters fill:#a5d8ff,stroke:#1864ab,stroke-width:3px
-    style Workers fill:#b2f2bb,stroke:#2b8a3e,stroke-width:3px
-    style OutIPs fill:#d0bfff,stroke:#7048e8,stroke-width:3px
-    style OutDNS fill:#d0bfff,stroke:#7048e8,stroke-width:3px
-    style OutLB fill:#d0bfff,stroke:#7048e8,stroke-width:3px
-    style OutAnsible fill:#d0bfff,stroke:#7048e8,stroke-width:3px
-    style OutSummary fill:#d0bfff,stroke:#7048e8,stroke-width:3px
+    style VarFile stroke:#0066CC,stroke-width:4px
+    style TFVars stroke:#0066CC,stroke-width:4px
+    style Locals stroke:#FF8800,stroke-width:4px
+    style Bootstrap stroke:#FF0000,stroke-width:4px
+    style Masters stroke:#0066CC,stroke-width:4px
+    style Workers stroke:#00AA00,stroke-width:4px
+    style OutIPs stroke:#9900CC,stroke-width:4px
+    style OutDNS stroke:#9900CC,stroke-width:4px
+    style OutLB stroke:#9900CC,stroke-width:4px
+    style OutAnsible stroke:#9900CC,stroke-width:4px
+    style OutSummary stroke:#9900CC,stroke-width:4px
 ```
 
 **Flow** :
@@ -382,8 +382,8 @@ graph TB
             M2 -.->|Failed| E2
 
             E0 <--> E1
-            E0 -.x|Lost| E2
-            E1 -.x|Lost| E2
+            E0 -.-|Lost| E2
+            E1 -.-|Lost| E2
         end
 
         subgraph Quorum["🗄️ etcd Quorum"]
@@ -413,19 +413,19 @@ graph TB
         S3[1 Worker down<br/>✅ Pods rescheduled<br/>Service OK]
     end
 
-    style M0 fill:#69db7c,stroke:#2b8a3e,stroke-width:3px
-    style M1 fill:#69db7c,stroke:#2b8a3e,stroke-width:3px
-    style M2 fill:#ff8787,stroke:#c92a2a,stroke-width:3px,stroke-dasharray: 5 5
-    style E0 fill:#69db7c,stroke:#2b8a3e,stroke-width:3px
-    style E1 fill:#69db7c,stroke:#2b8a3e,stroke-width:3px
-    style E2 fill:#ff8787,stroke:#c92a2a,stroke-width:3px,stroke-dasharray: 5 5
-    style Q fill:#ffd43b,stroke:#f08c00,stroke-width:4px
-    style W0 fill:#69db7c,stroke:#2b8a3e,stroke-width:3px
-    style W1 fill:#69db7c,stroke:#2b8a3e,stroke-width:3px
-    style W2 fill:#ff8787,stroke:#c92a2a,stroke-width:3px,stroke-dasharray: 5 5
-    style S1 fill:#69db7c,stroke:#2b8a3e,stroke-width:3px
-    style S2 fill:#ff8787,stroke:#c92a2a,stroke-width:3px
-    style S3 fill:#69db7c,stroke:#2b8a3e,stroke-width:3px
+    style M0 stroke:#00AA00,stroke-width:4px
+    style M1 stroke:#00AA00,stroke-width:4px
+    style M2 stroke:#FF0000,stroke-width:4px,stroke-dasharray: 5 5
+    style E0 stroke:#00AA00,stroke-width:4px
+    style E1 stroke:#00AA00,stroke-width:4px
+    style E2 stroke:#FF0000,stroke-width:4px,stroke-dasharray: 5 5
+    style Q stroke:#FF8800,stroke-width:5px
+    style W0 stroke:#00AA00,stroke-width:4px
+    style W1 stroke:#00AA00,stroke-width:4px
+    style W2 stroke:#FF0000,stroke-width:4px,stroke-dasharray: 5 5
+    style S1 stroke:#00AA00,stroke-width:4px
+    style S2 stroke:#FF0000,stroke-width:4px
+    style S3 stroke:#00AA00,stroke-width:4px
 ```
 
 **Tolérance aux pannes** :
@@ -482,16 +482,16 @@ graph TB
         end
     end
 
-    style Layer1 fill:#ffc9c9,stroke:#c92a2a,stroke-width:3px
-    style Layer2 fill:#a5d8ff,stroke:#1864ab,stroke-width:3px
-    style Layer3 fill:#ffe066,stroke:#f08c00,stroke-width:3px
-    style Layer4 fill:#b2f2bb,stroke:#2b8a3e,stroke-width:3px
-    style Microseg fill:#ff8787,stroke:#c92a2a,stroke-width:3px
-    style RBAC fill:#74c0fc,stroke:#1864ab,stroke-width:3px
-    style AtRest fill:#ffc078,stroke:#e67700,stroke-width:3px
-    style InTransit fill:#ffc078,stroke:#e67700,stroke-width:3px
-    style Runtime fill:#8ce99a,stroke:#2b8a3e,stroke-width:3px
-    style Audit fill:#8ce99a,stroke:#2b8a3e,stroke-width:3px
+    style Layer1 stroke:#FF0000,stroke-width:4px
+    style Layer2 stroke:#0066CC,stroke-width:4px
+    style Layer3 stroke:#FF8800,stroke-width:4px
+    style Layer4 stroke:#00AA00,stroke-width:4px
+    style Microseg stroke:#FF0000,stroke-width:4px
+    style RBAC stroke:#0066CC,stroke-width:4px
+    style AtRest stroke:#FF8800,stroke-width:4px
+    style InTransit stroke:#FF8800,stroke-width:4px
+    style Runtime stroke:#00AA00,stroke-width:4px
+    style Audit stroke:#00AA00,stroke-width:4px
 ```
 
 **4 Couches de Défense** :
@@ -615,20 +615,17 @@ mmdc -i DIAGRAMS_MERMAID.md -o diagrams.png
 
 ## 🎨 Légende des Couleurs
 
-Les diagrammes utilisent une palette de couleurs **vives et contrastées** pour une meilleure visibilité :
+Les diagrammes utilisent une palette de couleurs **simples et très contrastées** (bordures épaisses uniquement, sans fond coloré) pour une lisibilité maximale :
 
 | Couleur | Code Hex | Signification | Usage |
 |---------|----------|---------------|-------|
-| 🔴 **Rouge vif** | `#ff6b6b` | Bootstrap | Noeud temporaire (supprimé après install) |
-| 🔵 **Bleu vif** | `#4dabf7` | Masters | Control plane + API Server |
-| 🟢 **Vert vif** | `#51cf66` | Workers | Noeuds de compute pour workloads |
-| 🟠 **Orange vif** | `#ffa94d` | etcd | Base de données distribuée |
-| 🟣 **Violet vif** | `#b197fc` | Load Balancer | Répartition de charge |
-| ⚠️ **Jaune vif** | `#ffd43b` | Attention | Quorum, warnings |
-| ✅ **Vert clair** | `#69db7c` | État sain | Cluster opérationnel, noeuds actifs |
-| ❌ **Rouge clair** | `#ff8787` | Panne | Noeuds down, erreurs |
+| 🔴 **Rouge** | `#FF0000` | Bootstrap / Erreurs | Noeud temporaire ou composants en panne |
+| 🔵 **Bleu** | `#0066CC` | Masters / Control Plane | Masters, API, composants de contrôle |
+| 🟢 **Vert** | `#00AA00` | Workers / OK | Workers, noeuds compute, états sains |
+| 🟠 **Orange** | `#FF8800` | etcd / Attention | Base de données distribuée, warnings |
+| 🟣 **Violet** | `#9900CC` | Load Balancer / Outputs | LB, outputs Terraform |
 
-> **Note** : Les couleurs ont été optimisées pour une excellente visibilité sur fond blanc ET fond sombre.
+> **Note** : Les couleurs utilisent uniquement des **bordures épaisses (4-5px)** sans fond coloré pour une meilleure lisibilité sur tous les fonds (clair/sombre).
 
 ---
 
