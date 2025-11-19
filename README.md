@@ -356,6 +356,73 @@ openshift-install wait-for install-complete --log-level=info
 - ✅ **Maintenance** : Changements centralisés
 - ✅ **Lisibilité** : Logique métier séparée de la configuration
 
+#### ⚠️ IPs Statiques vs DHCP en Production
+
+**Dans ce code (démo)** :
+- Utilisation de `ip_range_start = "192.168.50.10"` pour calculer les IPs séquentiellement
+- Nécessaire car `null_resource` ne crée pas de vraies VMs avec interfaces réseau
+
+**En production réelle** :
+
+| Type de Noeud | IP | Raison |
+|---------------|-----|--------|
+| **Masters** | ⚠️ **OBLIGATOIREMENT statiques** | Exigence Red Hat : DNS A records, etcd SRV records, stabilité control plane |
+| **Workers** | ✅ DHCP possible | Terraform récupère les IPs via attributs computed (`vm.default_ip_address`) |
+| **Bootstrap** | ✅ DHCP possible | Noeud temporaire (supprimé après installation) |
+
+**Exemple adaptation avec IPs statiques (Masters) et DHCP (Workers)** :
+
+```hcl
+# variables.tf - IPs statiques pour masters
+variable "master_static_ips" {
+  description = "IPs statiques pour les masters (exigence OpenShift UPI)"
+  type        = list(string)
+  default     = ["192.168.50.11", "192.168.50.12", "192.168.50.13"]
+}
+
+# main.tf - Nutanix exemple
+resource "nutanix_virtual_machine" "master_nodes" {
+  count = var.masters_count
+  name  = "ocp-master-${count.index}"
+
+  nic_list {
+    subnet_uuid = data.nutanix_subnet.ocp_network.id
+    # IP statique assignée
+    ip_endpoint_list {
+      ip   = var.master_static_ips[count.index]
+      type = "ASSIGNED"
+    }
+  }
+}
+
+resource "nutanix_virtual_machine" "worker_nodes" {
+  count = var.workers_count
+  name  = "ocp-worker-${count.index}"
+
+  nic_list {
+    subnet_uuid = data.nutanix_subnet.ocp_network.id
+    # Pas d'ip_endpoint_list → DHCP automatique
+  }
+}
+
+# outputs.tf - Récupération des IPs
+output "master_ips" {
+  description = "IPs statiques des masters"
+  value       = var.master_static_ips
+}
+
+output "worker_ips" {
+  description = "IPs assignées par DHCP aux workers"
+  value       = [for vm in nutanix_virtual_machine.worker_nodes :
+                 vm.nic_list[0].ip_endpoint_list[0].ip]
+}
+```
+
+**Recommandations GTT** :
+- 🔴 **Masters** : Toujours IPs statiques + réservations DHCP (MAC binding)
+- 🟢 **Workers** : DHCP acceptable si DNS dynamique configuré (ddns-update-style interim)
+- 🔵 **Best Practice** : Même avec DHCP, créer des réservations par adresse MAC dans le serveur DHCP
+
 ### 4. Outputs détaillés
 
 **Choix** : Outputs riches avec informations DNS, LB, Ansible
