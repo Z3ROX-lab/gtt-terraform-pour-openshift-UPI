@@ -449,14 +449,14 @@ Guide de préparation technique Lead SecOps.
 
 ### Sections clés
 
-1. **Structure de présentation** : Script minute par minute
-2. **Questions/Réponses** : 8 questions techniques + réponses prêtes
-3. **Pièges à éviter** : Ce qu'il ne faut pas dire
-4. **Questions à poser** : Montrer votre intérêt pour le projet
-5. **Checklist** : Ce qu'il faut réviser avant la présentation
+1. **Structure du déploiement** : Organisation étape par étape
+2. **Points techniques** : 8 aspects clés avec explications détaillées
+3. **Bonnes pratiques** : Approches recommandées et anti-patterns
+4. **Considérations projet** : Points d'attention pour l'infrastructure
+5. **Vérifications** : Points à valider avant mise en production
 
 **Utilité** :
-> "Ce guide prépare à toutes les questions probables, avec des réponses alignées sur le poste Lead SecOps."
+> "Ce guide couvre les aspects techniques essentiels pour un déploiement OpenShift UPI en environnement SecOps."
 
 ---
 
