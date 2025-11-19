@@ -295,6 +295,8 @@ sequenceDiagram
 graph LR
     subgraph Input["📥 Input"]
         VarFile[variables.tf<br/>📋 Définitions<br/>+ Validations]
+        MainFile[main.tf<br/>📦 Ressources<br/>Bootstrap, Masters, Workers]
+        OutFile[outputs.tf<br/>📤 Outputs<br/>IPs, DNS, Ansible]
         TFVars[terraform.tfvars<br/>⚙️ Valeurs<br/>configuration]
     end
 
@@ -322,6 +324,7 @@ graph LR
 
     VarFile --> Locals
     TFVars --> Locals
+    MainFile --> Resources
     Locals --> Resources
 
     Bootstrap --> OutIPs
@@ -341,7 +344,15 @@ graph LR
     Masters --> OutSummary
     Workers --> OutSummary
 
+    OutFile -.-> OutIPs
+    OutFile -.-> OutDNS
+    OutFile -.-> OutLB
+    OutFile -.-> OutAnsible
+    OutFile -.-> OutSummary
+
     style VarFile stroke:#0066CC,stroke-width:4px
+    style MainFile stroke:#0066CC,stroke-width:4px
+    style OutFile stroke:#9900CC,stroke-width:4px
     style TFVars stroke:#0066CC,stroke-width:4px
     style Locals stroke:#FF8800,stroke-width:4px
     style Bootstrap stroke:#FF0000,stroke-width:4px
@@ -355,11 +366,16 @@ graph LR
 ```
 
 **Flow** :
-1. Variables définies (variables.tf)
-2. Valeurs fournies (terraform.tfvars)
-3. Calculs dans locals (IPs, noms)
-4. Création des ressources VMs
-5. Outputs générés (IPs, DNS, LB, etc.)
+1. **Input** : Fichiers sources Terraform
+   - variables.tf : Définitions et validations
+   - main.tf : Ressources (bootstrap, masters, workers)
+   - outputs.tf : Structure des outputs
+   - terraform.tfvars : Valeurs de configuration
+2. **Execution** : Terraform traite les fichiers
+   - Calculs dans locals (IPs, noms, metadata)
+   - Création des ressources VMs
+3. **Output** : Résultats générés
+   - IPs, DNS, LB, Ansible inventory, Summary
 
 ---
 
@@ -440,45 +456,61 @@ graph TB
 ```mermaid
 graph TB
     subgraph ZeroTrust["🔒 Architecture Sécurité Zero Trust"]
-        subgraph Layer1["Couche 1: Network Security"]
+        subgraph Layer1["Couche 1: Network Segmentation"]
             VLAN1[VLAN 10<br/>Management<br/>Bootstrap + Bastion]
             VLAN2[VLAN 20<br/>Control Plane<br/>Masters + etcd]
             VLAN3[VLAN 30<br/>Data Plane<br/>Workers + Apps]
 
-            Microseg[Nutanix Flow<br/>Microsegmentation<br/>Policy-based isolation]
+            OVN[OVN-Kubernetes<br/>CNI natif OpenShift<br/>Software-Defined Networking]
 
-            VLAN1 --> Microseg
-            VLAN2 --> Microseg
-            VLAN3 --> Microseg
+            NS[Namespaces<br/>Isolation logique<br/>Multi-tenancy]
+            SCC[Security Context Constraints<br/>Pod Security Standards<br/>Natif OpenShift]
+            NetPol[NetworkPolicies<br/>Contrôle trafic pod-to-pod<br/>deny-all by default]
+
+            VLAN1 --> OVN
+            VLAN2 --> OVN
+            VLAN3 --> OVN
+            OVN --> NS
+            NS --> SCC
+            NS --> NetPol
         end
 
         subgraph Layer2["Couche 2: Identity & Access"]
-            RBAC[OpenShift RBAC<br/>Role-Based Access Control]
-            OAuth[OAuth / LDAP<br/>Identity Provider]
-            PSA[Pod Security Admission<br/>restricted profile]
-            NetPol[Network Policies<br/>deny-all by default]
+            RBAC[OpenShift RBAC<br/>Role-Based Access Control<br/>Natif K8s/OpenShift]
+            OAuth[OAuth / LDAP<br/>Identity Provider<br/>Natif OpenShift]
+            Keycloak[Keycloak<br/>OIDC Provider<br/>SSO Enterprise]
+            PSA[Pod Security Admission<br/>restricted profile<br/>Natif K8s 1.25+]
 
             OAuth --> RBAC
+            Keycloak --> OAuth
             RBAC --> PSA
-            RBAC --> NetPol
         end
 
-        subgraph Layer3["Couche 3: Encryption"]
-            AtRest[Encryption at Rest<br/>• VM Disks<br/>• etcd<br/>• Secrets]
-            InTransit[Encryption in Transit<br/>• mTLS<br/>• Ingress TLS<br/>• Service Mesh]
+        subgraph Layer3["Couche 3: Encryption & Secrets"]
+            AtRest[Encryption at Rest<br/>• etcd natif<br/>• PV encryption<br/>• VM Disks hyperviseur]
+            InTransit[Encryption in Transit<br/>• mTLS cluster natif<br/>• Ingress TLS<br/>• Service Mesh Istio]
 
-            AtRest --> SecureBoot[Secure Boot<br/>+ vTPM]
-            InTransit --> CertMgr[cert-manager<br/>Certificate Automation]
+            Vault[HashiCorp Vault<br/>External Secrets<br/>Dynamic Credentials]
+            KMS[Cloud KMS<br/>AWS KMS / Azure Key Vault<br/>Envelope Encryption]
+            ESO[External Secrets Operator<br/>Sync secrets → K8s<br/>GitOps compatible]
+
+            AtRest --> Vault
+            AtRest --> KMS
+            InTransit --> CertMgr[cert-manager<br/>Certificate Automation<br/>Let's Encrypt / CA privée]
+            Vault --> ESO
+            KMS --> ESO
         end
 
-        subgraph Layer4["Couche 4: Monitoring & Audit"]
+        subgraph Layer4["Couche 4: Monitoring & Compliance"]
             Runtime[Falco<br/>Runtime Security<br/>Anomaly Detection]
             Audit[Audit Logs<br/>→ SIEM<br/>Centralized Logging]
-            Compliance[OpenSCAP<br/>CIS Benchmarks<br/>Policy Enforcement]
+            Compliance[OpenSCAP<br/>Compliance Operator NATIF<br/>CIS / NIST / PCI-DSS]
+            Prowler[Prowler<br/>Cloud Security Scanner<br/>AWS / Azure / GCP]
 
             Runtime --> SIEM[Splunk / Elastic SIEM]
             Audit --> SIEM
-            Compliance --> OPA[OPA / Kyverno<br/>Policy as Code]
+            Compliance --> OPA[OPA / Kyverno<br/>Policy as Code<br/>GitOps enforcement]
+            Prowler --> SIEM
         end
     end
 
@@ -486,19 +518,33 @@ graph TB
     style Layer2 stroke:#0066CC,stroke-width:4px
     style Layer3 stroke:#FF8800,stroke-width:4px
     style Layer4 stroke:#00AA00,stroke-width:4px
-    style Microseg stroke:#FF0000,stroke-width:4px
+    style OVN stroke:#FF0000,stroke-width:4px
+    style NS stroke:#FF0000,stroke-width:4px
+    style SCC stroke:#FF0000,stroke-width:4px
+    style NetPol stroke:#FF0000,stroke-width:4px
     style RBAC stroke:#0066CC,stroke-width:4px
+    style OAuth stroke:#0066CC,stroke-width:4px
+    style Keycloak stroke:#0066CC,stroke-width:4px
+    style PSA stroke:#0066CC,stroke-width:4px
     style AtRest stroke:#FF8800,stroke-width:4px
     style InTransit stroke:#FF8800,stroke-width:4px
+    style Vault stroke:#FF8800,stroke-width:4px
+    style KMS stroke:#FF8800,stroke-width:4px
+    style ESO stroke:#FF8800,stroke-width:4px
+    style CertMgr stroke:#FF8800,stroke-width:4px
     style Runtime stroke:#00AA00,stroke-width:4px
     style Audit stroke:#00AA00,stroke-width:4px
+    style Compliance stroke:#00AA00,stroke-width:4px
+    style Prowler stroke:#00AA00,stroke-width:4px
+    style SIEM stroke:#00AA00,stroke-width:4px
+    style OPA stroke:#00AA00,stroke-width:4px
 ```
 
 **4 Couches de Défense** :
-1. 🔴 **Network** : VLANs, microsegmentation
-2. 🔵 **Identity** : RBAC, OAuth, pod security
-3. 🟠 **Encryption** : At-rest, in-transit, mTLS
-4. 🟢 **Monitoring** : Runtime security, audit, compliance
+1. 🔴 **Network Segmentation** : VLANs physiques, OVN-Kubernetes (CNI natif), Namespaces, SCC, NetworkPolicies
+2. 🔵 **Identity & Access** : RBAC, OAuth/LDAP/Keycloak, Pod Security Admission
+3. 🟠 **Encryption & Secrets** : Encryption at-rest (etcd natif, PV, VM), in-transit (mTLS natif), Vault/KMS, External Secrets Operator
+4. 🟢 **Monitoring & Compliance** : Falco (runtime), Audit logs, OpenSCAP natif (Compliance Operator), Prowler (cloud scanning)
 
 ---
 
