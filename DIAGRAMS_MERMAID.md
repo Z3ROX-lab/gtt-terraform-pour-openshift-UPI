@@ -299,7 +299,7 @@ graph LR
     end
 
     subgraph Execution["⚙️ Terraform Execution"]
-        Locals[locals {}<br/>🧮 Calculs<br/>IPs, metadata]
+        Locals[locals block<br/>🧮 Calculs<br/>IPs, metadata]
 
         Resources[Resources<br/>📦 VMs]
 
