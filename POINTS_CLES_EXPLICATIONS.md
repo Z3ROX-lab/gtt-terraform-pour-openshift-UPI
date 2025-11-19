@@ -1,6 +1,6 @@
 # Points Clés - Explications par Fichier
 
-Ce document fournit une explication concise de chaque fichier terraform.
+Ce document fournit une explication concise de chaque fichier pour vous aider à les présenter lors d'une démonstration technique.
 
 ---
 
@@ -49,6 +49,12 @@ variable "masters_count" {
 #### 5. **Validations de sécurité** (partout)
 **Explication** :
 > "J'ai mis des validations strictes pour empêcher les erreurs de configuration. Par exemple, impossible de créer un master avec moins de 4 vCPU. C'est du shift-left security : on détecte les problèmes avant le déploiement."
+
+### Pourquoi c'est bien fait
+✅ **Séparation claire** : Variables isolées des ressources
+✅ **Validations** : Prévention des erreurs
+✅ **Defaults sensés** : Conformes aux best practices OpenShift
+✅ **Commentaires** : Auto-documenté
 
 ---
 
@@ -127,6 +133,12 @@ resource "null_resource" "master_nodes" {
 > - vSphere : utilise extra_config pour Ignition, guestinfo.ignition.config.data
 >
 > La transition vers du vrai code est rapide : copier l'exemple, configurer les data sources (cluster, network), et c'est opérationnel."
+
+### Pourquoi c'est bien fait
+✅ **Modularité** : Facile de passer à un vrai provider
+✅ **Automation** : Calculs automatiques (IPs, noms)
+✅ **Dependencies** : Bootstrap → Masters → Workers (ordre correct)
+✅ **Tagging** : Chaque ressource identifiable par rôle
 
 ---
 
@@ -282,6 +294,12 @@ output "deployment_summary" {
 ```
 **Explication** :
 > "Cet output affiche un résumé lisible en console. Après terraform apply, l'ops voit immédiatement l'inventaire complet des noeuds et des ressources allouées. C'est de l'UX pour les ops."
+
+### Pourquoi c'est bien fait
+✅ **Complet** : Toutes les infos nécessaires exposées
+✅ **Structuré** : Format JSON réutilisable par d'autres outils
+✅ **Anticipation** : DNS, LB, Ansible même si hors scope
+✅ **UX** : Résumé lisible pour validation humaine
 
 ---
 
