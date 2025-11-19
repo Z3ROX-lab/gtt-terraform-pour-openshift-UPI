@@ -628,37 +628,6 @@ stateDiagram-v2
 
 ---
 
-## 📊 Utilisation pour les Présentations
-
-### Recommandations
-
-1. **Sur GitHub** : Les diagrammes s'affichent automatiquement
-2. **Pendant la présentation** : Ouvrir ce fichier dans un navigateur
-3. **Présentation** :
-   - Commencer par le **Diagramme 1** (Architecture générale)
-   - Expliquer le flux avec le **Diagramme 2** (Déploiement)
-   - Détailler la sécurité avec le **Diagramme 7** (Zero Trust)
-
-### Outils de Rendu
-
-Si GitHub ne rend pas les diagrammes :
-
-- **Mermaid Live Editor** : https://mermaid.live/
-- **VS Code** : Extension "Markdown Preview Mermaid Support"
-- **Chrome/Firefox** : Extension "Markdown Preview Plus"
-
-### Export en Images
-
-```bash
-# Installer mmdc (mermaid-cli)
-npm install -g @mermaid-js/mermaid-cli
-
-# Exporter en PNG
-mmdc -i DIAGRAMS_MERMAID.md -o diagrams.png
-```
-
----
-
 ## 🎨 Légende des Couleurs
 
 Les diagrammes utilisent une palette de couleurs **simples et très contrastées** (bordures épaisses uniquement, sans fond coloré) pour une lisibilité maximale :
