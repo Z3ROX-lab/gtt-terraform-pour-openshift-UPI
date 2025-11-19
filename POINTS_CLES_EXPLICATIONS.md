@@ -208,8 +208,79 @@ output "dns_records" {
 > Un ops peut copier-coller ces infos dans HAProxy, F5, ou le LB Nutanix."
 
 #### 5. **Inventaire Ansible** (lignes 203-242)
+
+**Ce que c'est** :
+Un inventaire Ansible n'est **pas du code Ansible** - c'est un **fichier de configuration** qui liste vos serveurs (comme un annuaire téléphonique pour vos machines).
+
+**Format généré** :
+```ini
+[bootstrap]
+ocp-cluster-bootstrap ansible_host=192.168.50.10
+
+[masters]
+ocp-cluster-master-0 ansible_host=192.168.50.11
+ocp-cluster-master-1 ansible_host=192.168.50.12
+ocp-cluster-master-2 ansible_host=192.168.50.13
+
+[workers]
+ocp-cluster-worker-0 ansible_host=192.168.50.14
+ocp-cluster-worker-1 ansible_host=192.168.50.15
+```
+
 **Explication** :
-> "J'ai généré un output au format inventaire Ansible. Si vous avez des playbooks de post-config (monitoring agents, backup tools), cet output s'intègre directement."
+> "J'ai généré un inventaire Ansible pour faciliter la post-configuration. L'inventaire liste toutes les machines du cluster (IPs, hostnames, groupes). Si vous avez des playbooks de post-config, vous pouvez les exécuter immédiatement sur le cluster."
+
+**Cas d'usage concrets** :
+
+1. **Installer agents de monitoring** :
+   ```yaml
+   # playbook: install-monitoring.yml
+   - hosts: all
+     tasks:
+       - name: Installer Datadog agent
+         yum: name=datadog-agent state=present
+   ```
+   ```bash
+   terraform output -raw ansible_inventory > inventory.ini
+   ansible-playbook -i inventory.ini install-monitoring.yml
+   ```
+
+2. **Configurer backup etcd** :
+   ```yaml
+   - hosts: masters
+     tasks:
+       - name: Backup etcd quotidien
+         cron:
+           name: "Backup etcd"
+           job: "/usr/local/bin/backup-etcd.sh"
+           hour: "2"
+   ```
+
+3. **Installer certificats custom** :
+   ```yaml
+   - hosts: workers
+     tasks:
+       - name: Installer cert entreprise
+         copy:
+           src: /path/to/cert.crt
+           dest: /etc/pki/ca-trust/source/anchors/
+   ```
+
+4. **Audit configuration** :
+   ```bash
+   # Vérifier version RHCOS sur tous les noeuds
+   ansible all -i inventory.ini -m command -a "cat /etc/os-release"
+   ```
+
+**Flux complet DevOps/SecOps** :
+```
+Terraform → Crée VMs → Génère inventaire
+                ↓
+            Ansible → Exécute playbooks post-config
+                      (monitoring, backup, hardening)
+```
+
+**Pour GTT** : Intégration immédiate avec vos playbooks existants de sécurité (Falco, audit logs, hardening RHCOS).
 
 #### 6. **Résumé formaté** (lignes 258-290)
 ```hcl
