@@ -39,6 +39,7 @@ Ce projet Terraform supporte **toutes les plateformes OpenShift UPI** :
 - ✅ **Nutanix** AHV
 - ✅ **VMware vSphere**
 - ✅ **Red Hat Virtualization** (RHV)
+- ✅ **Red Hat OpenStack** Platform
 - ✅ **KVM** / libvirt
 - ✅ **Bare Metal**
 

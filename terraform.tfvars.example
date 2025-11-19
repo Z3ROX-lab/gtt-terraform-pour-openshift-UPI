@@ -65,7 +65,7 @@ worker_ignition    = "/path/to/worker.ign"
 # --- Configuration de la Plateforme ---
 
 # Plateforme de déploiement
-# On-Premise: nutanix, vsphere, rhv, kvm, baremetal
+# On-Premise: nutanix, vsphere, rhv, openstack, kvm, baremetal
 # Cloud Public: aws, azure, gcp, ibmcloud, alibabacloud
 # Hybride: generic (portable)
 platform   = "nutanix"

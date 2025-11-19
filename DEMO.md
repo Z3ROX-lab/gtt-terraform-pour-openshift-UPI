@@ -291,18 +291,18 @@ terraform plan
 ### Test 3 : Plateforme invalide (doit échouer)
 
 ```bash
-# Plateforme non supportée
-echo 'platform = "openstack"' >> terraform.tfvars
+# Plateforme non supportée (Proxmox n'est pas officiellement supporté)
+echo 'platform = "proxmox"' >> terraform.tfvars
 
 # Tester
 terraform plan
 
 # Sortie attendue :
 # Error: Invalid value for variable
-# Plateforme supportée: nutanix, vsphere, rhv, kvm, baremetal (on-prem) | aws, azure, gcp...
+# Plateforme supportée: nutanix, vsphere, rhv, openstack, kvm, baremetal (on-prem) | aws, azure, gcp...
 ```
 
-✅ **Validation fonctionne** : Seules les plateformes UPI supportées
+✅ **Validation fonctionne** : Seules les plateformes UPI supportées par OpenShift
 
 ---
 

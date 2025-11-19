@@ -205,6 +205,7 @@ variable "platform" {
       "nutanix",
       "vsphere",
       "rhv",
+      "openstack",
       "kvm",
       "baremetal",
       # Cloud Public
@@ -216,7 +217,7 @@ variable "platform" {
       # Generic
       "generic"
     ], var.platform)
-    error_message = "Plateforme supportée: nutanix, vsphere, rhv, kvm, baremetal (on-prem) | aws, azure, gcp, ibmcloud, alibabacloud (cloud) | generic."
+    error_message = "Plateforme supportée: nutanix, vsphere, rhv, openstack, kvm, baremetal (on-prem) | aws, azure, gcp, ibmcloud, alibabacloud (cloud) | generic."
   }
 }
 
