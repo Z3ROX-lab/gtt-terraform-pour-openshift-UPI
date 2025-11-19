@@ -434,7 +434,7 @@ terraform output (si apply fait)
 
 ---
 
-## 💡 Questions Attendues et Réponses
+## 💡 Question-Reponses
 
 ### Q : "Ce code crée vraiment des VMs ?"
 **R** : "Avec le provider null, non. C'est une démo de la logique. Mais le code est production-ready : en remplaçant null_resource par nutanix_virtual_machine, azurerm_linux_virtual_machine, ou aws_instance, tout fonctionne tel quel. J'ai des exemples commentés pour chaque provider dans main.tf."
