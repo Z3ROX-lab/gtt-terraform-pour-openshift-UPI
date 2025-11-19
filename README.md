@@ -10,7 +10,7 @@
 - [Utilisation](#utilisation)
 - [Décisions de design](#décisions-de-design)
 - [Adaptation à des providers spécifiques](#adaptation-à-des-providers-spécifique)
-- [Points clés pour l'entretien](#points-clés-pour-lentretien)
+- [Points clés pour la présentation](#points-clés-pour-la-présentation)
 
 ## 🎯 Vue d'ensemble
 
@@ -143,7 +143,7 @@ Pour une visualisation complète et interactive de l'architecture, consultez **[
 7. **Sécurité Zero Trust** - 4 couches de défense (réseau, identité, chiffrement, monitoring)
 8. **Lifecycle OpenShift UPI** - State diagram du déploiement à la mise hors service
 
-> 💡 **Astuce** : Ces diagrammes s'affichent automatiquement sur GitHub et dans la plupart des éditeurs Markdown modernes. Imprimez-les pour votre entretien !
+> 💡 **Astuce** : Ces diagrammes s'affichent automatiquement sur GitHub et dans la plupart des éditeurs Markdown modernes. Imprimez-les pour vos présentations !
 
 ## 📁 Structure du projet
 
@@ -157,7 +157,7 @@ Pour une visualisation complète et interactive de l'architecture, consultez **[
 ├── README.md                    # Cette documentation
 ├── DIAGRAMS_MERMAID.md          # Diagrammes interactifs Mermaid
 ├── ARCHITECTURE.md              # Diagrammes ASCII détaillés
-├── GUIDE_ENTRETIEN.md           # Guide de préparation entretien
+├── GUIDE_PREPARATION.md         # Guide de préparation technique
 └── POINTS_CLES_EXPLICATIONS.md  # Explications par fichier
 ```
 
@@ -523,7 +523,7 @@ resource "libvirt_ignition" "master" {
 }
 ```
 
-## 📝 Points clés pour l'entretien
+## 📝 Points clés pour la présentation
 
 ### Compréhension d'OpenShift UPI
 
@@ -659,4 +659,4 @@ resource "libvirt_ignition" "master" {
 
 ---
 
-**Bonne chance pour votre entretien !** 🚀
+**Bonne chance pour votre présentation !** 🚀

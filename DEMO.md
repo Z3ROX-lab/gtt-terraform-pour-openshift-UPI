@@ -1,6 +1,6 @@
 # Guide de Démonstration - Terraform OpenShift UPI
 
-Ce guide explique comment **tester et démontrer** le code Terraform lors de l'entretien, même sans infrastructure réelle.
+Ce guide explique comment **tester et démontrer** le code Terraform lors d'une présentation, même sans infrastructure réelle.
 
 ---
 
@@ -214,7 +214,7 @@ terraform apply -auto-approve
 - ✅ Les `provisioner local-exec` s'exécutent (affichent les infos)
 - ✅ Aucune vraie VM n'est créée (c'est une simulation)
 
-**⚠️ Option B : Plan uniquement (recommandé pour l'entretien)**
+**⚠️ Option B : Plan uniquement (recommandé pour la démonstration)**
 
 Si vous ne voulez pas modifier le state, restez à `terraform plan`
 
@@ -306,7 +306,7 @@ terraform plan
 
 ---
 
-## 🎬 Script de Démo pour l'Entretien
+## 🎬 Script de Démonstration
 
 ### Scénario recommandé (10 minutes)
 
@@ -387,14 +387,14 @@ terraform destroy -auto-approve
 - Les fichiers Ignition ne sont pas utilisés
 - C'est juste la phase infrastructure
 
-**Comment expliquer en entretien** :
+**Explication** :
 > "J'utilise le provider null pour démontrer la logique Terraform sans avoir besoin d'accès à une infrastructure réelle. En production, on remplacerait ces 20 lignes par les ressources du provider Nutanix/AWS/Azure, et tout fonctionnerait tel quel."
 
 ---
 
 ## 📸 Captures d'Écran Recommandées
 
-Pour l'entretien, préparez des screenshots de :
+Pour la présentation, préparez des screenshots de :
 
 1. ✅ `terraform init` → Success
 2. ✅ `terraform validate` → Configuration is valid
@@ -402,7 +402,7 @@ Pour l'entretien, préparez des screenshots de :
 4. ✅ Outputs affichés (master_ips, deployment_summary)
 5. ✅ Erreur de validation (masters_count = 4)
 
-Avoir ces screenshots en backup au cas où Terraform ne serait pas installé sur la machine de l'entretien.
+Avoir ces screenshots en backup au cas où Terraform ne serait pas installé sur la machine de présentation.
 
 ---
 
@@ -450,7 +450,7 @@ terraform output (si apply fait)
 
 ---
 
-## ✅ Checklist Avant l'Entretien
+## ✅ Checklist Avant la Démonstration
 
 - [ ] Terraform installé et testé
 - [ ] `terraform init` fonctionne

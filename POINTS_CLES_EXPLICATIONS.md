@@ -1,6 +1,6 @@
 # Points Clés - Explications par Fichier
 
-Ce document fournit une explication concise de chaque fichier pour vous aider à les présenter lors de l'entretien.
+Ce document fournit une explication concise de chaque fichier pour vous aider à les présenter lors d'une démonstration technique.
 
 ---
 
@@ -20,7 +20,7 @@ variable "cluster_name" {
   }
 }
 ```
-**Dire** :
+**Explication** :
 > "J'ai ajouté des validations Terraform pour garantir que le nom du cluster respecte les contraintes OpenShift (max 27 caractères). Cela prévient les erreurs de déploiement."
 
 #### 2. **Compteurs de noeuds** (lignes 33-53)
@@ -32,22 +32,22 @@ variable "masters_count" {
   }
 }
 ```
-**Dire** :
+**Explication** :
 > "Cette validation force un nombre impair de masters (3, 5, 7) car etcd nécessite un quorum. Avec 3 masters, on tolère 1 panne. C'est une exigence architecturale critique."
 
 #### 3. **Ressources CPU/RAM/Disque** (lignes 71-167)
-**Dire** :
+**Explication** :
 > "Toutes les ressources sont paramétrables mais respectent les minimums Red Hat :
 > - Bootstrap : 4 vCPU, 16 GB RAM (temporaire)
 > - Masters : 4+ vCPU, 16+ GB RAM (j'ai mis 8/32 par défaut pour la prod)
 > - Workers : 2+ vCPU, 8+ GB RAM (dimensionnable selon les workloads)"
 
 #### 4. **Fichiers Ignition** (lignes 169-181)
-**Dire** :
+**Explication** :
 > "Ignition est le système de provisionnement de Red Hat CoreOS. Chaque type de noeud reçoit sa configuration via ces fichiers générés par openshift-install. C'est un point de sécurité fort : configuration immuable dès le boot."
 
 #### 5. **Validations de sécurité** (partout)
-**Dire** :
+**Explication** :
 > "J'ai mis des validations strictes pour empêcher les erreurs de configuration. Par exemple, impossible de créer un master avec moins de 4 vCPU. C'est du shift-left security : on détecte les problèmes avant le déploiement."
 
 ### Pourquoi c'est bien fait
@@ -74,7 +74,7 @@ terraform {
   }
 }
 ```
-**Dire** :
+**Explication** :
 > "J'ai utilisé le provider 'null' pour la démonstration, comme autorisé dans l'exercice. En production, on remplacerait par le provider Nutanix. J'ai d'ailleurs inclus des exemples commentés en bas du fichier montrant comment utiliser nutanix_virtual_machine."
 
 #### 2. **Locals - Calculs centralisés** (lignes 24-66)
@@ -85,7 +85,7 @@ locals {
   master_metadata = [for i in range(...) : { ... }]
 }
 ```
-**Dire** :
+**Explication** :
 > "J'ai centralisé tous les calculs dans les locals pour éviter la duplication. Par exemple, les IPs sont calculées automatiquement à partir de ip_range_start. Les métadonnées (hostname, FQDN, rôle) sont générées pour chaque noeud. C'est du DRY (Don't Repeat Yourself) appliqué."
 
 **Points forts** :
@@ -103,7 +103,7 @@ resource "null_resource" "bootstrap_node" {
   }
 }
 ```
-**Dire** :
+**Explication** :
 > "Le bootstrap est une ressource unique (pas de count). Il est temporaire et sera supprimé après l'installation. J'ai utilisé des triggers pour recréer la VM si la config change. Le tag 'role=bootstrap' permet l'identification et l'audit."
 
 #### 4. **Ressources Masters** (lignes 111-154)
@@ -119,15 +119,15 @@ resource "null_resource" "master_nodes" {
   depends_on = [null_resource.bootstrap_node]
 }
 ```
-**Dire** :
+**Explication** :
 > "Les masters utilisent count pour créer N instances. J'ai ajouté depends_on pour garantir que le bootstrap démarre en premier (il héberge le Machine Config Server dont les masters ont besoin). Chaque master est identifiable via son index et son hostname unique."
 
 #### 5. **Ressources Workers** (lignes 160-202)
-**Dire** :
+**Explication** :
 > "Même pattern que les masters mais avec workers_count paramétrable. C'est là qu'on peut scaler horizontalement selon les besoins en compute. Pour votre projet IA, vous pourriez facilement passer de 2 à 10 workers en changeant une variable."
 
 #### 6. **Exemples providers réels** (lignes 208-276, commentés)
-**Dire** :
+**Explication** :
 > "J'ai inclus des exemples concrets pour Nutanix et vSphere :
 > - Nutanix : utilise categories pour les tags, cloud-init pour Ignition
 > - vSphere : utilise extra_config pour Ignition, guestinfo.ignition.config.data
@@ -159,7 +159,7 @@ output "master_ips" {
   value = local.master_ips
 }
 ```
-**Dire** :
+**Explication** :
 > "Ces outputs répondent aux exigences de l'exercice : afficher les IPs et noms des noeuds. Après un terraform apply, on peut faire terraform output master_ips pour récupérer la liste."
 
 #### 2. **Outputs structurés** (lignes 62-118)
@@ -175,7 +175,7 @@ output "master_nodes" {
   ]
 }
 ```
-**Dire** :
+**Explication** :
 > "J'ai créé des outputs structurés qui donnent une vue complète de chaque noeud. C'est utile pour :
 > - Générer des inventaires Ansible (voir output ansible_inventory)
 > - Configurer le DNS automatiquement
@@ -190,7 +190,7 @@ output "dns_records" {
   }
 }
 ```
-**Dire** :
+**Explication** :
 > "Bien que le DNS soit hors scope de l'exercice, j'ai anticipé ce besoin. Ces outputs fournissent tous les enregistrements DNS à créer :
 > - A records pour api, api-int
 > - Wildcard pour *.apps (routes applicatives)
@@ -199,7 +199,7 @@ output "dns_records" {
 > Cela facilite l'intégration avec Route53, Azure DNS, ou n'importe quel provider DNS."
 
 #### 4. **Configuration Load Balancer** (lignes 171-199)
-**Dire** :
+**Explication** :
 > "Pareil pour le load balancer. Cet output documente :
 > - Port 6443 → Masters (API Kubernetes)
 > - Port 22623 → Masters (Machine Config Server)
@@ -208,7 +208,7 @@ output "dns_records" {
 > Un ops peut copier-coller ces infos dans HAProxy, F5, ou le LB Nutanix."
 
 #### 5. **Inventaire Ansible** (lignes 203-242)
-**Dire** :
+**Explication** :
 > "J'ai généré un output au format inventaire Ansible. Si vous avez des playbooks de post-config (monitoring agents, backup tools), cet output s'intègre directement."
 
 #### 6. **Résumé formaté** (lignes 258-290)
@@ -221,7 +221,7 @@ output "deployment_summary" {
   EOT
 }
 ```
-**Dire** :
+**Explication** :
 > "Cet output affiche un résumé lisible en console. Après terraform apply, l'ops voit immédiatement l'inventaire complet des noeuds et des ressources allouées. C'est de l'UX pour les ops."
 
 ### Pourquoi c'est bien fait
@@ -239,7 +239,7 @@ Fichier d'exemple montrant **comment utiliser les variables**.
 
 ### Points clés à expliquer
 
-**Dire** :
+**Explication** :
 > "J'ai créé un tfvars.example avec :
 > 1. **Configuration de base** : Prête à l'emploi pour un cluster prod
 > 2. **Instructions** : Comment copier et utiliser le fichier
@@ -254,7 +254,7 @@ Fichier d'exemple montrant **comment utiliser les variables**.
 3. **Edge** : Ressources limitées (2 CPU / 8 GB workers)
 4. **AI/ML** : Workers surdimensionnés (32 CPU / 128 GB)
 
-**Dire** :
+**Explication** :
 > "Ces scénarios montrent la flexibilité du code. On peut déployer du edge computing ou de l'IA en changeant juste des variables."
 
 ---
@@ -271,9 +271,9 @@ Documentation exhaustive du projet.
 3. **Utilisation** : Guide step-by-step
 4. **Décisions de design** : Justification de chaque choix
 5. **Adaptation providers** : Exemples Nutanix, vSphere, KVM
-6. **Points clés pour l'entretien** : Questions/réponses attendues
+6. **Points clés pour la présentation** : Questions/réponses attendues
 
-**Dire** :
+**Explication** :
 > "Le README est structuré pour accompagner un ops de A à Z :
 > - Comprendre le contexte (pourquoi UPI ?)
 > - Déployer (commandes terraform)
@@ -284,10 +284,10 @@ Documentation exhaustive du projet.
 
 ---
 
-## 📄 GUIDE_ENTRETIEN.md - Préparation Entretien
+## 📄 GUIDE_PREPARATION.md - Préparation Technique
 
 ### Ce que c'est
-Guide de préparation spécifique pour l'entretien Lead SecOps.
+Guide de préparation technique Lead SecOps.
 
 ### Sections clés
 
@@ -295,10 +295,10 @@ Guide de préparation spécifique pour l'entretien Lead SecOps.
 2. **Questions/Réponses** : 8 questions techniques + réponses prêtes
 3. **Pièges à éviter** : Ce qu'il ne faut pas dire
 4. **Questions à poser** : Montrer votre intérêt pour le projet
-5. **Checklist** : Ce qu'il faut réviser avant l'entretien
+5. **Checklist** : Ce qu'il faut réviser avant la présentation
 
 **Utilité** :
-> "Ce guide vous prépare à toutes les questions probables, avec des réponses alignées sur le poste Lead SecOps."
+> "Ce guide prépare à toutes les questions probables, avec des réponses alignées sur le poste Lead SecOps."
 
 ---
 
@@ -318,7 +318,7 @@ Diagrammes ASCII illustrant l'architecture.
 7. **Ports et protocoles** : Tableau exhaustif
 
 **Utilité** :
-> "Imprimez ces diagrammes pour l'entretien. Ils permettent d'expliquer visuellement l'architecture complexe sans avoir besoin d'un whiteboard."
+> "Imprimez ces diagrammes pour vos présentations. Ils permettent d'expliquer visuellement l'architecture complexe sans avoir besoin d'un whiteboard."
 
 ---
 
@@ -333,10 +333,10 @@ Diagrammes ASCII illustrant l'architecture.
 | **outputs.tf** | "Intégration facilitée avec DNS, LB, Ansible, monitoring" |
 | **tfvars.example** | "Scénarios réels (dev, prod, edge, AI/ML)" |
 | **README.md** | "Documentation complète de A à Z" |
-| **GUIDE_ENTRETIEN.md** | "Préparation ciblée Lead SecOps" |
+| **GUIDE_PREPARATION.md** | "Préparation technique Lead SecOps" |
 | **ARCHITECTURE.md** | "Visualisation de l'architecture complexe" |
 
-### Points à répéter lors de l'entretien
+### Points à répéter lors d'une présentation
 
 1. **Sécurité by design** : Validations, Ignition, tags, least privilege
 2. **Conformité OpenShift** : Respect des exigences Red Hat (quorum etcd, ressources minimales)
@@ -347,4 +347,4 @@ Diagrammes ASCII illustrant l'architecture.
 
 ---
 
-**Bonne préparation pour votre entretien ! 🚀**
+**Bonne préparation pour votre présentation ! 🚀**

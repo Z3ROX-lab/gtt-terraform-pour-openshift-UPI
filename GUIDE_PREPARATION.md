@@ -1,4 +1,4 @@
-# Guide de Préparation pour l'Entretien - Lead SecOps Senior
+# Guide de Préparation Technique - Lead SecOps Senior
 
 ## 🎯 Objectif du poste
 
@@ -299,7 +299,7 @@ output "deployment_summary" {
 > "Mon approche Lead SecOps pour ce projet :
 >
 > **Phase 1 - Discovery (Semaine 1-2)** :
-> - Mener les entretiens sécurité avec RSSI, DSI, équipes cloud (mentionné dans l'offre)
+> - Mener les discussions sécurité avec RSSI, DSI, équipes cloud (mentionné dans l'offre)
 > - Cartographier les flux de données sensibles
 > - Identifier les exigences réglementaires (RGPD, sectorielles)
 >
@@ -413,7 +413,7 @@ output "deployment_summary" {
 
 ## 💡 Questions à Poser à l'Employeur
 
-**À la fin de l'entretien, posez 2-3 questions pour montrer votre intérêt** :
+**Questions à poser pour montrer votre intérêt** :
 
 ### Questions Techniques
 1. "Quelle est votre stack de sécurité actuelle ? Avez-vous déjà des outils CSPM ou SIEM en place ?"
@@ -429,7 +429,7 @@ output "deployment_summary" {
 7. "Quelle est la méthodologie projet utilisée ? Agile, Waterfall ?"
 8. "Y a-t-il une possibilité d'extension après les 6 semaines si le projet nécessite plus de temps ?"
 
-## 📊 Checklist Avant l'Entretien
+## 📊 Checklist de Préparation
 
 ### Matériel à préparer
 - [ ] Code Terraform imprimé ou sur laptop

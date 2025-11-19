@@ -582,12 +582,12 @@ stateDiagram-v2
 
 ---
 
-## 📊 Utilisation pour l'Entretien
+## 📊 Utilisation pour les Présentations
 
 ### Recommandations
 
 1. **Sur GitHub** : Les diagrammes s'affichent automatiquement
-2. **Pendant l'entretien** : Ouvrir ce fichier dans un navigateur
+2. **Pendant la présentation** : Ouvrir ce fichier dans un navigateur
 3. **Présentation** :
    - Commencer par le **Diagramme 1** (Architecture générale)
    - Expliquer le flux avec le **Diagramme 2** (Déploiement)

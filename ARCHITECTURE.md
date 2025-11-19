@@ -517,4 +517,4 @@ variables.tf                     main.tf                      outputs.tf
 
 ---
 
-**Imprimez ces diagrammes pour votre entretien !**
+**Imprimez ces diagrammes pour vos présentations !**
