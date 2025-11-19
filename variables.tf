@@ -195,13 +195,28 @@ variable "worker_ignition" {
 
 # --- Configuration de la Plateforme ---
 variable "platform" {
-  description = "Plateforme de virtualisation cible (nutanix, vsphere, kvm, etc.)"
+  description = "Plateforme de déploiement (on-premise, cloud public, ou hybride)"
   type        = string
   default     = "generic"
 
   validation {
-    condition     = contains(["nutanix", "vsphere", "kvm", "generic"], var.platform)
-    error_message = "La plateforme doit être: nutanix, vsphere, kvm, ou generic."
+    condition = contains([
+      # On-Premise / Private Cloud
+      "nutanix",
+      "vsphere",
+      "rhv",
+      "kvm",
+      "baremetal",
+      # Cloud Public
+      "aws",
+      "azure",
+      "gcp",
+      "ibmcloud",
+      "alibabacloud",
+      # Generic
+      "generic"
+    ], var.platform)
+    error_message = "Plateforme supportée: nutanix, vsphere, rhv, kvm, baremetal (on-prem) | aws, azure, gcp, ibmcloud, alibabacloud (cloud) | generic."
   }
 }
 

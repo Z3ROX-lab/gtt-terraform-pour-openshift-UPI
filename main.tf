@@ -280,4 +280,114 @@ resource "vsphere_virtual_machine" "master" {
     vsphere_tag.cluster.id,
   ]
 }
+
+# Exemple pour AWS Provider (Cloud Public)
+resource "aws_instance" "master" {
+  count         = var.masters_count
+  ami           = data.aws_ami.rhcos.id
+  instance_type = "m5.2xlarge"  # 8 vCPU, 32 GB RAM
+
+  subnet_id              = data.aws_subnet.private.id
+  vpc_security_group_ids = [aws_security_group.master.id]
+  iam_instance_profile   = aws_iam_instance_profile.master.name
+
+  root_block_device {
+    volume_type = "gp3"
+    volume_size = var.master_disk_size
+    encrypted   = true
+  }
+
+  user_data = file(var.master_ignition)
+
+  tags = merge(
+    local.all_tags,
+    {
+      Name = local.master_metadata[count.index].hostname
+      Role = "master"
+      "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    }
+  )
+}
+
+# Exemple pour Azure Provider (Cloud Public)
+resource "azurerm_linux_virtual_machine" "master" {
+  count               = var.masters_count
+  name                = local.master_metadata[count.index].hostname
+  resource_group_name = azurerm_resource_group.openshift.name
+  location            = azurerm_resource_group.openshift.location
+  size                = "Standard_D8s_v3"  # 8 vCPU, 32 GB RAM
+
+  admin_username                  = "core"
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username   = "core"
+    public_key = file("~/.ssh/id_rsa.pub")
+  }
+
+  network_interface_ids = [
+    azurerm_network_interface.master[count.index].id,
+  ]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+    disk_size_gb         = var.master_disk_size
+  }
+
+  source_image_reference {
+    publisher = "RedHat"
+    offer     = "rhcos"
+    sku       = "rhcos"
+    version   = "latest"
+  }
+
+  custom_data = base64encode(file(var.master_ignition))
+
+  tags = merge(
+    local.all_tags,
+    {
+      Role = "master"
+      "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    }
+  )
+}
+
+# Exemple pour GCP Provider (Cloud Public)
+resource "google_compute_instance" "master" {
+  count        = var.masters_count
+  name         = local.master_metadata[count.index].hostname
+  machine_type = "n2-standard-8"  # 8 vCPU, 32 GB RAM
+  zone         = var.gcp_zone
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.rhcos.self_link
+      size  = var.master_disk_size
+      type  = "pd-ssd"
+    }
+  }
+
+  network_interface {
+    network    = google_compute_network.openshift.id
+    subnetwork = google_compute_subnetwork.master.id
+  }
+
+  metadata = {
+    user-data = file(var.master_ignition)
+  }
+
+  labels = merge(
+    local.all_tags,
+    {
+      role = "master"
+      "kubernetes-io-cluster-${var.cluster_name}" = "owned"
+    }
+  )
+
+  service_account {
+    email  = google_service_account.master.email
+    scopes = ["cloud-platform"]
+  }
+}
 */

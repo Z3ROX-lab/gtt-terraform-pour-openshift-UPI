@@ -25,9 +25,34 @@ OpenShift peut être déployé de deux manières :
 
 Le mode UPI est utilisé dans les cas suivants :
 - Environnements on-premise (VMware, Nutanix, KVM, bare metal)
+- **Cloud public** (AWS, Azure, GCP) avec contrôle personnalisé
+- Architectures **hybrides** (on-premise + cloud)
 - Besoin de contrôle granulaire sur l'infrastructure
 - Restrictions de sécurité ou de conformité
 - Plateformes non supportées en mode IPI
+
+### Plateformes supportées par ce code
+
+Ce projet Terraform supporte **toutes les plateformes OpenShift UPI** :
+
+#### On-Premise / Private Cloud
+- ✅ **Nutanix** AHV
+- ✅ **VMware vSphere**
+- ✅ **Red Hat Virtualization** (RHV)
+- ✅ **KVM** / libvirt
+- ✅ **Bare Metal**
+
+#### Cloud Public
+- ✅ **AWS** (EC2)
+- ✅ **Microsoft Azure** (VMs)
+- ✅ **Google Cloud** (Compute Engine)
+- ✅ **IBM Cloud**
+- ✅ **Alibaba Cloud**
+
+#### Hybride
+- ✅ **Generic** : Code portable pour architectures multi-cloud
+
+> 💡 **Pour GTT** : Ce code supporte l'architecture IA hybride mentionnée dans l'offre - données sensibles on-premise (Nutanix) + compute élastique cloud (Azure/AWS).
 
 ## 🏗️ Architecture OpenShift UPI
 

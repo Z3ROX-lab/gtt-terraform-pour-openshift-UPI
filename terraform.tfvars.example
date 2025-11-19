@@ -64,7 +64,11 @@ worker_ignition    = "/path/to/worker.ign"
 
 # --- Configuration de la Plateforme ---
 
-platform   = "nutanix"  # Options: nutanix, vsphere, kvm, generic
+# Plateforme de déploiement
+# On-Premise: nutanix, vsphere, rhv, kvm, baremetal
+# Cloud Public: aws, azure, gcp, ibmcloud, alibabacloud
+# Hybride: generic (portable)
+platform   = "nutanix"
 image_name = "rhcos-4.14.0"
 datacenter = "dc-paris-01"
 
@@ -150,4 +154,118 @@ master_memory    = 32768
 worker_cpu       = 32     # Workers avec beaucoup de CPU
 worker_memory    = 131072  # 128 GB pour les workloads ML
 worker_disk_size = 500     # Disque large pour les datasets
+*/
+
+# ============================================================================
+# Exemples Cloud Public (AWS, Azure, GCP)
+# ============================================================================
+
+# --- Scénario 5: Cluster sur AWS (Cloud Public) ---
+/*
+cluster_name = "ocp-aws"
+base_domain  = "aws.company.cloud"
+
+masters_count = 3
+workers_count = 3
+
+# Instance types AWS
+# m5.2xlarge = 8 vCPU, 32 GB RAM (masters)
+# m5.xlarge = 4 vCPU, 16 GB RAM (workers)
+platform   = "aws"
+image_name = "rhcos-aws-4.14.0"
+
+bootstrap_cpu    = 4
+bootstrap_memory = 16384
+master_cpu       = 8
+master_memory    = 32768
+worker_cpu       = 4
+worker_memory    = 16384
+
+common_tags = {
+  managed_by  = "terraform"
+  purpose     = "openshift-upi"
+  environment = "production"
+  cloud       = "aws"
+  region      = "eu-west-1"
+}
+*/
+
+# --- Scénario 6: Cluster sur Azure (Cloud Public) ---
+/*
+cluster_name = "ocp-azure"
+base_domain  = "azure.company.cloud"
+
+masters_count = 3
+workers_count = 3
+
+# VM sizes Azure
+# Standard_D8s_v3 = 8 vCPU, 32 GB RAM (masters)
+# Standard_D4s_v3 = 4 vCPU, 16 GB RAM (workers)
+platform   = "azure"
+image_name = "rhcos-azure-4.14.0"
+
+bootstrap_cpu    = 4
+bootstrap_memory = 16384
+master_cpu       = 8
+master_memory    = 32768
+worker_cpu       = 4
+worker_memory    = 16384
+
+common_tags = {
+  managed_by  = "terraform"
+  purpose     = "openshift-upi"
+  environment = "production"
+  cloud       = "azure"
+  region      = "francecentral"
+}
+*/
+
+# --- Scénario 7: Cluster sur GCP (Cloud Public) ---
+/*
+cluster_name = "ocp-gcp"
+base_domain  = "gcp.company.cloud"
+
+masters_count = 3
+workers_count = 3
+
+# Machine types GCP
+# n2-standard-8 = 8 vCPU, 32 GB RAM (masters)
+# n2-standard-4 = 4 vCPU, 16 GB RAM (workers)
+platform   = "gcp"
+image_name = "rhcos-gcp-4.14.0"
+
+bootstrap_cpu    = 4
+bootstrap_memory = 16384
+master_cpu       = 8
+master_memory    = 32768
+worker_cpu       = 4
+worker_memory    = 16384
+
+common_tags = {
+  managed_by  = "terraform"
+  purpose     = "openshift-upi"
+  environment = "production"
+  cloud       = "gcp"
+  region      = "europe-west1"
+}
+*/
+
+# --- Scénario 8: Architecture Hybride (On-Prem + Cloud) ---
+# Pour GTT : Données sensibles on-prem, compute élastique cloud
+/*
+# Cluster 1: On-Premise (Nutanix) - Données sensibles
+cluster_name = "ocp-onprem"
+base_domain  = "onprem.gtt.local"
+platform     = "nutanix"
+
+masters_count = 3
+workers_count = 3  # Workloads sensibles, conformité
+
+# Cluster 2: Cloud (Azure) - Compute élastique IA/ML
+# cluster_name = "ocp-cloud"
+# base_domain  = "cloud.gtt.com"
+# platform     = "azure"
+#
+# masters_count = 3
+# workers_count = 5  # Burst capacity, GPU pour ML
 */
