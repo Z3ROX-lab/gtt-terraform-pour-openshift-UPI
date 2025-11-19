@@ -36,6 +36,29 @@ variable "masters_count" {
 > "Cette validation force un nombre impair de masters (3, 5, 7) car etcd nécessite un quorum. Avec 3 masters, on tolère 1 panne. C'est une exigence architecturale critique."
 
 #### 3. **Ressources CPU/RAM/Disque** (lignes 71-167)
+```hcl
+variable "master_cpu" {
+  description = "Nombre de vCPUs pour chaque master"
+  type        = number
+  default     = 8
+
+  validation {
+    condition     = var.master_cpu >= 4
+    error_message = "Chaque master nécessite au minimum 4 vCPUs."
+  }
+}
+
+variable "master_memory" {
+  description = "Mémoire RAM pour chaque master (en MB)"
+  type        = number
+  default     = 32768  # 32 GB
+
+  validation {
+    condition     = var.master_memory >= 16384
+    error_message = "Chaque master nécessite au minimum 16 GB de RAM."
+  }
+}
+```
 **Explication** :
 > "Toutes les ressources sont paramétrables mais respectent les minimums Red Hat :
 > - Bootstrap : 4 vCPU, 16 GB RAM (temporaire)
@@ -43,14 +66,45 @@ variable "masters_count" {
 > - Workers : 2+ vCPU, 8+ GB RAM (dimensionnable selon les workloads)"
 
 #### 4. **Fichiers Ignition** (lignes 169-181)
+```hcl
+variable "bootstrap_ignition" {
+  description = "Chemin vers le fichier Ignition pour le bootstrap"
+  type        = string
+  default     = "./ignition/bootstrap.ign"
+}
+
+variable "master_ignition" {
+  description = "Chemin vers le fichier Ignition pour les masters"
+  type        = string
+  default     = "./ignition/master.ign"
+}
+
+variable "worker_ignition" {
+  description = "Chemin vers le fichier Ignition pour les workers"
+  type        = string
+  default     = "./ignition/worker.ign"
+}
+```
 **Explication** :
 > "Ignition est le système de provisionnement de Red Hat CoreOS. Chaque type de noeud reçoit sa configuration via ces fichiers générés par openshift-install. C'est un point de sécurité fort : configuration immuable dès le boot."
 
 #### 5. **Validations de sécurité** (partout)
+```hcl
+variable "enable_secure_boot" {
+  description = "Activer Secure Boot pour les VMs (recommandé en production)"
+  type        = bool
+  default     = false
+}
+
+variable "enable_vtpm" {
+  description = "Activer vTPM pour le chiffrement (recommandé en production)"
+  type        = bool
+  default     = false
+}
+```
 **Explication** :
 > "J'ai mis des validations strictes pour empêcher les erreurs de configuration. Par exemple, impossible de créer un master avec moins de 4 vCPU. C'est du shift-left security : on détecte les problèmes avant le déploiement."
 
-### Pourquoi c'est bien fait
 ✅ **Séparation claire** : Variables isolées des ressources
 ✅ **Validations** : Prévention des erreurs
 ✅ **Defaults sensés** : Conformes aux best practices OpenShift
@@ -134,7 +188,6 @@ resource "null_resource" "master_nodes" {
 >
 > La transition vers du vrai code est rapide : copier l'exemple, configurer les data sources (cluster, network), et c'est opérationnel."
 
-### Pourquoi c'est bien fait
 ✅ **Modularité** : Facile de passer à un vrai provider
 ✅ **Automation** : Calculs automatiques (IPs, noms)
 ✅ **Dependencies** : Bootstrap → Masters → Workers (ordre correct)
@@ -295,7 +348,6 @@ output "deployment_summary" {
 **Explication** :
 > "Cet output affiche un résumé lisible en console. Après terraform apply, l'ops voit immédiatement l'inventaire complet des noeuds et des ressources allouées. C'est de l'UX pour les ops."
 
-### Pourquoi c'est bien fait
 ✅ **Complet** : Toutes les infos nécessaires exposées
 ✅ **Structuré** : Format JSON réutilisable par d'autres outils
 ✅ **Anticipation** : DNS, LB, Ansible même si hors scope
