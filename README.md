@@ -594,14 +594,14 @@ resource "libvirt_ignition" "master" {
 
 ### Compréhension d'OpenShift UPI
 
-**Question attendue** : *"Expliquez la différence entre IPI et UPI"*
+**Note** : *Différence entre IPI et UPI*
 
 **Réponse** :
 - **IPI** : Mode automatisé où l'installeur OpenShift crée toute l'infrastructure (cloud public)
 - **UPI** : Mode manuel où l'utilisateur provisionne l'infrastructure (on-premise, contrôle total)
 - **Cas d'usage UPI** : Nutanix, VMware, bare metal, restrictions de sécurité, environnements air-gapped
 
-**Question attendue** : *"Pourquoi 3 masters minimum ?"*
+**Note** : *3 masters minimum*
 
 **Réponse** :
 - **etcd** nécessite un quorum pour fonctionner
@@ -611,7 +611,7 @@ resource "libvirt_ignition" "master" {
 
 ### Terraform
 
-**Question attendue** : *"Pourquoi avoir structuré le code ainsi ?"*
+**Note** : *Structure du code*
 
 **Réponse** :
 - **Séparation des concerns** : variables, ressources, outputs dans des fichiers dédiés
@@ -619,7 +619,7 @@ resource "libvirt_ignition" "master" {
 - **Maintenabilité** : Code clair et bien commenté
 - **Validation** : Prévention des erreurs de configuration
 
-**Question attendue** : *"Comment rendre ce code adaptable ?"*
+**Note** : *Adaptabilité du code*
 
 **Réponse** :
 - Variables pour tous les paramètres importants
@@ -629,7 +629,7 @@ resource "libvirt_ignition" "master" {
 
 ### Sécurité (SecOps)
 
-**Question attendue** : *"Quels aspects de sécurité avez-vous considérés ?"*
+**Note** : *Aspects de sécurité considérés*
 
 **Réponse** :
 - **Ignition** : Configuration sécurisée dès le boot
@@ -640,7 +640,7 @@ resource "libvirt_ignition" "master" {
 - **Séparation réseau** : Masters et workers isolables
 - **Fichiers sensibles** : Ignition contient secrets (à gérer avec soin)
 
-**Question attendue** : *"Comment sécurisez-vous les fichiers Ignition ?"*
+**Note** : *Sécurisation des fichiers Ignition*
 
 **Réponse** :
 - Ne jamais commiter les `.ign` dans Git
@@ -651,7 +651,7 @@ resource "libvirt_ignition" "master" {
 
 ### Architecture Réseau et Load Balancing
 
-**Question attendue** : *"Quels sont les besoins réseau pour OpenShift UPI ?"*
+**Note** : *Besoins réseau pour OpenShift UPI*
 
 **Réponse** :
 - **Load Balancer** requis (non géré par Terraform dans cet exercice) :
@@ -664,7 +664,7 @@ resource "libvirt_ignition" "master" {
   - `*.apps.cluster.domain` → LB workers
   - SRV records pour etcd
 
-**Question attendue** : *"Comment gérez-vous le DNS et le LB ?"*
+**Note** : *Gestion DNS et Load Balancer*
 
 **Réponse** :
 - Hors scope de cet exercice (précisé dans le brief)
@@ -683,7 +683,7 @@ resource "libvirt_ignition" "master" {
 
 ### Questions de sécurité avancées
 
-**Question attendue** : *"Comment auditez-vous cette infrastructure ?"*
+**Note** : *Audit de l'infrastructure*
 
 **Réponse** :
 - **Terraform state** contient toute la config (audit trail)
@@ -692,7 +692,7 @@ resource "libvirt_ignition" "master" {
 - **Intégration CI/CD** : `terraform plan` en PR pour review
 - **Policy-as-Code** : Sentinel, OPA pour valider la conformité
 
-**Question attendue** : *"Comment gérez-vous les secrets ?"*
+**Note** : *Gestion des secrets*
 
 **Réponse** :
 - **Ne jamais** mettre de secrets en clair dans `.tf` ou `.tfvars`
@@ -705,7 +705,7 @@ resource "libvirt_ignition" "master" {
 
 ### Évolutions possibles
 
-**Question attendue** : *"Comment feriez-vous évoluer ce code ?"*
+**Note** : *Évolution du code*
 
 **Réponse** :
 - **Modules** : Créer un module réutilisable `openshift-upi`
